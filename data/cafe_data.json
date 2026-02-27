@@ -1,0 +1,55 @@
+{
+  "tables": [
+    {
+      "id": 1,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 2,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 3,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 4,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 5,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 6,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 7,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 8,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 9,
+      "seats": 4,
+      "booked": false
+    },
+    {
+      "id": 10,
+      "seats": 4,
+      "booked": false
+    }
+  ],
+  "bookings": []
+}

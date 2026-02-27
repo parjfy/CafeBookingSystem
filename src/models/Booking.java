@@ -1,18 +1,16 @@
 package models;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 public class Booking {
     private int id;
     private int tableId;
-    private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private String date;       // "2025-12-31"
+    private String startTime;  // "14:30"
+    private String endTime;    // "16:00" или "не указано"
     private String customerName;
     private String phone;
 
-    public Booking(int id, int tableId, LocalDate date, LocalTime startTime, LocalTime endTime,
+    // Конструктор со строками (используем его)
+    public Booking(int id, int tableId, String date, String startTime, String endTime,
                    String customerName, String phone) {
         this.id = id;
         this.tableId = tableId;
@@ -23,17 +21,20 @@ public class Booking {
         this.phone = phone;
     }
 
-    public Booking(int bookingId, int tableId, String dateStr, String startStr, String покаБезКонца, String name, String phone) {
-    }
-
-    // геттеры (добавь сам, если нужно больше)
+    // Геттеры
+    public int getId() { return id; }
     public int getTableId() { return tableId; }
-    public LocalDate getDate() { return date; }
-    public LocalTime getStartTime() { return startTime; }
+    public String getDate() { return date; }
+    public String getStartTime() { return startTime; }
+    public String getEndTime() { return endTime; }
+    public String getCustomerName() { return customerName; }
+    public String getPhone() { return phone; }
 
     @Override
     public String toString() {
-        return "Бронь #" + id + " | Столик " + tableId + " | " + date +
-                " " + startTime + "–" + endTime + " | " + customerName;
+        return "Бронь #" + id +
+                " | Столик " + tableId +
+                " | " + date + " " + startTime + "–" + endTime +
+                " | " + customerName + " (" + phone + ")";
     }
 }
