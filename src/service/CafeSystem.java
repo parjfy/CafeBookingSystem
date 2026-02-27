@@ -1,8 +1,10 @@
 package service;
 
+import java.io.*;
+
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import models.Booking;
 import models.Table;
 
@@ -10,7 +12,8 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
+import com.google.gson.reflect.TypeToken;
 
 public class CafeSystem {
     private List<Table> tables = new ArrayList<>();
@@ -38,7 +41,8 @@ public class CafeSystem {
         }
 
         try (Reader reader = new FileReader(file)) {
-            Type type = new TypeToken<DataStorage>() {}.getType();
+            Type type = new TypeToken<DataStorage>() {
+            }.getType();
             DataStorage data = gson.fromJson(reader, type);
             if (data != null) {
                 tables = (data.tables != null) ? data.tables : new ArrayList<>();
@@ -61,7 +65,7 @@ public class CafeSystem {
         }
     }
 
-    // Вывод всех столиков
+    // Пока просто метод для теста — вывести столики
     public void printTables() {
         System.out.println("\nСписок столиков:");
         for (Table t : tables) {
@@ -69,83 +73,9 @@ public class CafeSystem {
         }
     }
 
-    // Бронирование столика
-    public void bookTable(Scanner scanner) {
-        System.out.print("Введите номер столика (1-" + tables.size() + "): ");
-        int tableId;
-        try {
-            tableId = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.out.println("Ошибка: введите число!");
-            return;
-        }
-
-        if (tableId < 1 || tableId > tables.size()) {
-            System.out.println("Такого столика нет!");
-            return;
-        }
-
-        Table table = tables.get(tableId - 1);
-
-        if (table.isBooked()) {
-            System.out.println("Столик уже забронирован!");
-            return;
-        }
-
-        System.out.print("Введите дату (YYYY-MM-DD): ");
-        String dateStr = scanner.nextLine().trim();
-
-        System.out.print("Время начала (HH:MM): ");
-        String startStr = scanner.nextLine().trim();
-
-        System.out.print("ФИО клиента: ");
-        String name = scanner.nextLine().trim();
-
-        System.out.print("Телефон: ");
-        String phone = scanner.nextLine().trim();
-
-        // Создаём бронь (id = размер списка + 1)
-        int bookingId = bookings.size() + 1;
-        Booking newBooking = new Booking(bookingId, tableId, dateStr, startStr, "пока без конца", name, phone);
-        bookings.add(newBooking);
-
-        table.setBooked(true);
-
-        System.out.println("Столик забронирован успешно! Бронь #" + bookingId);
-        saveData();
-    }
-
-    // Пока пустой метод для отмены (добавим позже)
-    public void cancelBooking(Scanner scanner) {
-        System.out.println("Функция отмены бронирования пока в разработке.");
-        // Здесь будет логика поиска и удаления брони
-    }
-
-    // Метод run — можно вызывать из Main для запуска меню
-    public void run(Scanner scanner) {
-        while (true) {
-            System.out.println("\nМеню:");
-            System.out.println("1. Просмотреть все столики");
-            System.out.println("2. Забронировать столик");
-            System.out.println("3. Отменить бронирование");
-            System.out.println("4. Выход");
-
-            System.out.print("Выберите действие (1-4): ");
-            String choice = scanner.nextLine().trim();
-
-            if (choice.equals("1")) {
-                printTables();
-            } else if (choice.equals("2")) {
-                bookTable(scanner);
-            } else if (choice.equals("3")) {
-                cancelBooking(scanner);
-            } else if (choice.equals("4")) {
-                saveData();
-                System.out.println("До свидания!");
-                break;
-            } else {
-                System.out.println("Неверный выбор, попробуйте снова.");
-            }
-        }
+    // Метод, который вызовем из Main
+    public void run() {
+        printTables();
+        // saveData();  // можно вызывать после каждого изменения
     }
 }
