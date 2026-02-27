@@ -12,7 +12,7 @@ public class Booking {
     private String customerName;
     private String phone;
 
-    public Booking(int id, int tableId, LocalDate date, LocalTime startTime, LocalTime endTime,
+    public Booking(int id, int tableId, String date, String startTime, String endTime,
                    String customerName, String phone) {
         this.id = id;
         this.tableId = tableId;
@@ -21,9 +21,6 @@ public class Booking {
         this.endTime = endTime;
         this.customerName = customerName;
         this.phone = phone;
-    }
-
-    public Booking(int bookingId, int tableId, String dateStr, String startStr, String покаБезКонца, String name, String phone) {
     }
 
     // геттеры (добавь сам, если нужно больше)
