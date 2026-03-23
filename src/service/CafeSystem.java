@@ -20,13 +20,25 @@ public class CafeSystem {
 
     public CafeSystem() {
         loadData();
-        if (tables.isEmpty()) {
-            for (int i = 1; i <= 10; i++) {
-                tables.add(new Table(i, 4));
-            }
-            saveData();
-        }
+
+        // Форсированно создаем новые столики с разными размерами
+        tables.clear();  // очищаем старые столики
+        tables.add(new Table(1, 2));  // маленький
+        tables.add(new Table(2, 2));  // маленький
+        tables.add(new Table(3, 4));  // средний
+        tables.add(new Table(4, 4));  // средний
+        tables.add(new Table(5, 4));  // средний
+        tables.add(new Table(6, 6));  // большой
+        tables.add(new Table(7, 6));  // большой
+        tables.add(new Table(8, 8));  // очень большой
+        tables.add(new Table(9, 8));  // очень большой
+        tables.add(new Table(10, 4)); // средний
+        tables.add(new Table(11, 12));// очень большой
+
         System.out.println("Система загружена. Столиков: " + tables.size());
+        System.out.println("Бронирований загружено: " + bookings.size());
+
+        saveData(); // сохраняем новые столики
     }
 
     private void loadData() {
@@ -63,10 +75,14 @@ public class CafeSystem {
     // Красивый вывод столиков в таблице
     public void printTables() {
         System.out.println("\nСтатус столиков:");
-        System.out.printf("%-10s %-15s %-10s\n", "Номер", "Мест", "Статус");
-        System.out.println("-----------------------------------");
+        System.out.printf("%-10s %-15s %-20s %-10s\n", "Номер", "Мест", "Для компании", "Статус");
+        System.out.println("------------------------------------------------------------");
         for (Table t : tables) {
-            System.out.printf("%-10d %-15d %-10s\n", t.getId(), t.getSeats(), t.isBooked() ? "ЗАНЯТ" : "СВОБОДЕН");
+            String type = (t.getSeats() <= 2) ? "Маленькая" :
+                    (t.getSeats() <= 4) ? "Средняя" :
+                            (t.getSeats() <= 6) ? "Большая" : "Очень большая";
+            System.out.printf("%-10d %-15d %-20s %-10s\n",
+                    t.getId(), t.getSeats(), type, t.isBooked() ? "ЗАНЯТ" : "СВОБОДЕН");
         }
     }
 
@@ -87,6 +103,14 @@ public class CafeSystem {
 
         System.out.print("Введите дату (YYYY-MM-DD): ");
         String dateStr = scanner.nextLine().trim();
+
+        // 🔥 Проверка на дублирующую бронь на эту дату
+        for (Booking b : bookings) {
+            if (b.getTableId() == tableId && b.getDate().equals(dateStr)) {
+                System.out.println("На эту дату уже есть бронь!");
+                return;
+            }
+        }
 
         System.out.print("Время начала (HH:MM): ");
         String startStr = scanner.nextLine().trim();
@@ -154,11 +178,10 @@ public class CafeSystem {
         }
 
         System.out.println("\nВсе бронирования:");
-        System.out.printf("%-8s %-8s %-12s %-12s %-20s\n", "№", "Столик", "Дата", "Время", "Клиент");
-        System.out.println("----------------------------------------------------------");
+        System.out.println("-----------------------------------");
+
         for (Booking b : bookings) {
-            System.out.printf("%-8d %-8d %-12s %-12s %-20s\n",
-                    b.getId(), b.getTableId(), b.getDate(), b.getStartTime(), b.getCustomerName());
+            System.out.println(b); // 🔥 теперь используется toString()
         }
     }
 

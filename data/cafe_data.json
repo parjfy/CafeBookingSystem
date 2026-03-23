@@ -2,18 +2,18 @@
   "tables": [
     {
       "id": 1,
-      "seats": 4,
+      "seats": 2,
       "booked": false
     },
     {
       "id": 2,
-      "seats": 4,
+      "seats": 2,
       "booked": false
     },
     {
       "id": 3,
       "seats": 4,
-      "booked": false
+      "booked": true
     },
     {
       "id": 4,
@@ -27,29 +27,62 @@
     },
     {
       "id": 6,
-      "seats": 4,
+      "seats": 6,
       "booked": false
     },
     {
       "id": 7,
-      "seats": 4,
+      "seats": 6,
       "booked": false
     },
     {
       "id": 8,
-      "seats": 4,
+      "seats": 8,
       "booked": false
     },
     {
       "id": 9,
-      "seats": 4,
+      "seats": 8,
       "booked": false
     },
     {
       "id": 10,
       "seats": 4,
       "booked": false
+    },
+    {
+      "id": 11,
+      "seats": 12,
+      "booked": false
     }
   ],
-  "bookings": []
+  "bookings": [
+    {
+      "id": 3,
+      "tableId": 2,
+      "date": "22",
+      "startTime": "2",
+      "endTime": "пока без конца",
+      "name": "22",
+      "phone": "2"
+    },
+    {
+      "id": 2,
+      "tableId": 1,
+      "date": "22",
+      "startTime": "2",
+      "endTime": "пока без конца",
+      "name": "2",
+      "phone": "2"
+    },
+    {
+      "id": 3,
+      "tableId": 3,
+      "date": "1221",
+      "startTime": "21",
+      "endTime": "пока без конца",
+      "name": "21",
+      "phone": "2"
+    }
+  ]
 }
