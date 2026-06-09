@@ -21,24 +21,26 @@ public class CafeSystem {
     public CafeSystem() {
         loadData();
 
-        // Форсированно создаем новые столики с разными размерами
-        tables.clear();  // очищаем старые столики
-        tables.add(new Table(1, 2));  // маленький
-        tables.add(new Table(2, 2));  // маленький
-        tables.add(new Table(3, 4));  // средний
-        tables.add(new Table(4, 4));  // средний
-        tables.add(new Table(5, 4));  // средний
-        tables.add(new Table(6, 6));  // большой
-        tables.add(new Table(7, 6));  // большой
-        tables.add(new Table(8, 8));  // очень большой
-        tables.add(new Table(9, 8));  // очень большой
-        tables.add(new Table(10, 4)); // средний
-        tables.add(new Table(11, 12));// очень большой
+        // Если после загрузки список столиков пустой, заполняем его дефолтными
+        if (tables.isEmpty()) {
+            tables.add(new Table(1, 2));  // маленький
+            tables.add(new Table(2, 2));  // маленький
+            tables.add(new Table(3, 4));  // средний
+            tables.add(new Table(4, 4));  // средний
+            tables.add(new Table(5, 4));  // средний
+            tables.add(new Table(6, 6));  // большой
+            tables.add(new Table(7, 6));  // большой
+            tables.add(new Table(8, 8));  // очень большой
+            tables.add(new Table(9, 8));  // очень большой
+            tables.add(new Table(10, 4)); // средний
+            tables.add(new Table(11, 12));// очень большой
+
+            System.out.println("Созданы дефолтные столики.");
+            saveData(); // Сохраняем базовый набор один раз
+        }
 
         System.out.println("Система загружена. Столиков: " + tables.size());
         System.out.println("Бронирований загружено: " + bookings.size());
-
-        saveData(); // сохраняем новые столики
     }
 
     private void loadData() {

@@ -13,7 +13,7 @@
     {
       "id": 3,
       "seats": 4,
-      "booked": true
+      "booked": false
     },
     {
       "id": 4,
@@ -56,33 +56,5 @@
       "booked": false
     }
   ],
-  "bookings": [
-    {
-      "id": 3,
-      "tableId": 2,
-      "date": "22",
-      "startTime": "2",
-      "endTime": "пока без конца",
-      "name": "22",
-      "phone": "2"
-    },
-    {
-      "id": 2,
-      "tableId": 1,
-      "date": "22",
-      "startTime": "2",
-      "endTime": "пока без конца",
-      "name": "2",
-      "phone": "2"
-    },
-    {
-      "id": 3,
-      "tableId": 3,
-      "date": "1221",
-      "startTime": "21",
-      "endTime": "пока без конца",
-      "name": "21",
-      "phone": "2"
-    }
-  ]
+  "bookings": []
 }
