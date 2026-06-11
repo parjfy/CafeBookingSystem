@@ -8,7 +8,7 @@
     {
       "id": 2,
       "seats": 2,
-      "booked": false
+      "booked": true
     },
     {
       "id": 3,
@@ -54,7 +54,22 @@
       "id": 11,
       "seats": 12,
       "booked": false
+    },
+    {
+      "id": 12,
+      "seats": 12,
+      "booked": false
     }
   ],
-  "bookings": []
+  "bookings": [
+    {
+      "id": 1,
+      "tableId": 2,
+      "date": "2026-06-11",
+      "startTime": "15:27",
+      "endTime": "пока без конца",
+      "name": "Сыргабеков Шабдан",
+      "phone": "0999969715"
+    }
+  ]
 }

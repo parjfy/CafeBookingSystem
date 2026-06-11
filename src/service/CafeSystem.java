@@ -10,7 +10,6 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class CafeSystem {
     private List<Table> tables = new ArrayList<>();
@@ -35,12 +34,8 @@ public class CafeSystem {
             tables.add(new Table(10, 4)); // средний
             tables.add(new Table(11, 12));// очень большой
 
-            System.out.println("Созданы дефолтные столики.");
             saveData(); // Сохраняем базовый набор один раз
         }
-
-        System.out.println("Система загружена. Столиков: " + tables.size());
-        System.out.println("Бронирований загружено: " + bookings.size());
     }
 
     private void loadData() {
@@ -58,7 +53,7 @@ public class CafeSystem {
                 bookings = (data.bookings != null) ? data.bookings : new ArrayList<>();
             }
         } catch (Exception e) {
-            System.out.println("Ошибка загрузки: " + e.getMessage());
+            System.out.println("Ошибка загрузки данных: " + e.getMessage());
         }
     }
 
@@ -68,74 +63,39 @@ public class CafeSystem {
 
         try (Writer writer = new FileWriter(FILE_PATH)) {
             gson.toJson(data, writer);
-            System.out.println("Данные сохранены");
         } catch (Exception e) {
-            System.out.println("Ошибка сохранения: " + e.getMessage());
+            System.out.println("Ошибка сохранения данных: " + e.getMessage());
         }
     }
 
-    // Красивый вывод столиков в таблице
-    public void printTables() {
-        System.out.println("\nСтатус столиков:");
-        System.out.printf("%-10s %-15s %-20s %-10s\n", "Номер", "Мест", "Для компании", "Статус");
-        System.out.println("------------------------------------------------------------");
-        for (Table t : tables) {
-            String type = (t.getSeats() <= 2) ? "Маленькая" :
-                    (t.getSeats() <= 4) ? "Средняя" :
-                            (t.getSeats() <= 6) ? "Большая" : "Очень большая";
-            System.out.printf("%-10d %-15d %-20s %-10s\n",
-                    t.getId(), t.getSeats(), type, t.isBooked() ? "ЗАНЯТ" : "СВОБОДЕН");
-        }
-    }
-
-    public void bookTable(Scanner scanner) {
-        System.out.print("Введите номер столика (1-" + tables.size() + "): ");
-        int tableId = readInt(scanner, "Ошибка: введите число!");
-
+    // Логика бронирования (валидация перенесена сюда, а ошибки улетают в GUI)
+    public void bookTable(int tableId, String dateStr, String startStr, String name, String phone) throws Exception {
         if (tableId < 1 || tableId > tables.size()) {
-            System.out.println("Такого столика нет!");
-            return;
+            throw new Exception("Такого столика нет!");
         }
 
         Table table = tables.get(tableId - 1);
         if (table.isBooked()) {
-            System.out.println("Столик уже забронирован!");
-            return;
+            throw new Exception("Столик уже забронирован!");
         }
 
-        System.out.print("Введите дату (YYYY-MM-DD): ");
-        String dateStr = scanner.nextLine().trim();
-
-        // 🔥 Проверка на дублирующую бронь на эту дату
+        // Проверка на дублирующую бронь на эту дату
         for (Booking b : bookings) {
             if (b.getTableId() == tableId && b.getDate().equals(dateStr)) {
-                System.out.println("На эту дату уже есть бронь!");
-                return;
+                throw new Exception("На эту дату уже есть бронь!");
             }
         }
-
-        System.out.print("Время начала (HH:MM): ");
-        String startStr = scanner.nextLine().trim();
-
-        System.out.print("ФИО клиента: ");
-        String name = scanner.nextLine().trim();
-
-        System.out.print("Телефон: ");
-        String phone = scanner.nextLine().trim();
 
         int bookingId = bookings.size() + 1;
         Booking newBooking = new Booking(bookingId, tableId, dateStr, startStr, "пока без конца", name, phone);
         bookings.add(newBooking);
 
         table.setBooked(true);
-        System.out.println("Столик забронирован! Бронь #" + bookingId);
         saveData();
     }
 
-    public void cancelBooking(Scanner scanner) {
-        System.out.print("Введите номер брони для отмены: ");
-        int bookingId = readInt(scanner, "Ошибка: введите число!");
-
+    // Логика отмены бронирования
+    public void cancelBooking(int bookingId) throws Exception {
         Booking toRemove = null;
         for (Booking b : bookings) {
             if (b.getId() == bookingId) {
@@ -145,10 +105,13 @@ public class CafeSystem {
         }
 
         if (toRemove == null) {
-            System.out.println("Бронь #" + bookingId + " не найдена.");
-            return;
+            throw new Exception("Бронирование с ID #" + bookingId + " не найдено!");
         }
 
+        // Удаляем бронь из списка
+        bookings.remove(toRemove);
+
+        // 🔥 ВАЖНО: Освобождаем столик, который был закреплен за этой бронью
         for (Table t : tables) {
             if (t.getId() == toRemove.getTableId()) {
                 t.setBooked(false);
@@ -156,51 +119,79 @@ public class CafeSystem {
             }
         }
 
-        bookings.remove(toRemove);
-        System.out.println("Бронь #" + bookingId + " отменена.");
+        // Сохраняем обновленные данные в JSON файл
         saveData();
     }
 
     // Админ: добавить новый столик
-    public void addTable(Scanner scanner) {
-        System.out.print("Введите количество мест для нового столика: ");
-        int seats = readInt(scanner, "Ошибка: введите число!");
-
+    public void addTable(int seats) {
         int newId = tables.size() + 1;
         tables.add(new Table(newId, seats));
-        System.out.println("Добавлен столик #" + newId + " (" + seats + " мест)");
         saveData();
     }
 
-    // Админ: показать все бронирования
-    public void printAllBookings() {
-        if (bookings.isEmpty()) {
-            System.out.println("Бронирований пока нет.");
-            return;
-        }
-
-        System.out.println("\nВсе бронирования:");
-        System.out.println("-----------------------------------");
-
+    // 1. Метод для быстрого поиска брони по ID
+    public Booking getBookingById(int id) {
         for (Booking b : bookings) {
-            System.out.println(b); // 🔥 теперь используется toString()
+            if (b.getId() == id) {
+                return b;
+            }
         }
+        return null;
     }
 
-    // Админ: очистка старых броней (заглушка, можно доработать)
-    public void clearOldBookings() {
-        System.out.println("Очистка старых броней (пока не реализовано полностью).");
-        // Здесь можно добавить логику сравнения дат с текущей
+    // 2. Метод изменения данных бронирования
+    public void updateBooking(int bookingId, int newTableId, String newDate, String newTime, String newName, String newPhone) throws Exception {
+        Booking booking = getBookingById(bookingId);
+        if (booking == null) {
+            throw new Exception("Бронирование с ID #" + bookingId + " не найдено!");
+        }
+
+        // Если админ решил поменять клиенту номер столика
+        if (booking.getTableId() != newTableId) {
+            Table newTable = null;
+            for (Table t : tables) {
+                if (t.getId() == newTableId) {
+                    newTable = t;
+                    break;
+                }
+            }
+            if (newTable == null) {
+                throw new Exception("Столик №" + newTableId + " не существует в кафе!");
+            }
+            if (newTable.isBooked()) {
+                throw new Exception("Столик №" + newTableId + " уже занят кем-то другим!");
+            }
+
+            // Освобождаем старый столик
+            for (Table t : tables) {
+                if (t.getId() == booking.getTableId()) {
+                    t.setBooked(false);
+                    break;
+                }
+            }
+            // Занимаем новый столик
+            newTable.setBooked(true);
+            booking.setTableId(newTableId);
+        }
+
+        // Обновляем остальные текстовые поля
+        booking.setDate(newDate);
+        booking.setStartTime(newTime);
+        booking.setName(newName);
+        booking.setPhone(newPhone);
+
+        // Перезаписываем данные в JSON файл, чтобы ничего не пропало при перезапуске
         saveData();
     }
 
-    // Вспомогательный метод для чтения int с обработкой ошибок
-    private int readInt(Scanner scanner, String errorMsg) {
-        try {
-            return Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.out.println(errorMsg);
-            return -1; // или можно зациклить запрос
-        }
+    // Геттер для получения списка столиков графическим интерфейсом
+    public List<Table> getTables() {
+        return tables;
+    }
+
+    // Геттер для получения списка бронирований панелью администратора
+    public List<Booking> getBookings() {
+        return bookings;
     }
 }
